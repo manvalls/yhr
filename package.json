@@ -1,15 +1,13 @@
 {
   "name": "yhr",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "A yielded returning http request wrapper for nodejs and the browser",
   "main": "main.js",
   "dependencies": {
     "vz.yielded": "",
     "vz.rand": ""
   },
-  "devDependencies": {
-    
-  },
+  "devDependencies": {},
   "repository": {
     "type": "git",
     "url": "git://github.com/manvalls/yhr.git"
