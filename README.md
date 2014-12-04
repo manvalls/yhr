@@ -11,6 +11,13 @@ No piece of software is ever completed, feel free to contribute and be humble.
 ## Sample usage:
 
 ```javascript
+var get = require('yhr/get'),
+    walk = require('vz.walk');
 
+walk(function*(){
+  var data = yield get('https://www.gravatar.com/manvalls.json');
+  
+  // data.entry[0].displayName == 'manvalls'
+});
 ```
 
