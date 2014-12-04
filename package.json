@@ -1,0 +1,22 @@
+{
+  "name": "yhr",
+  "version": "0.0.0",
+  "description": "A yielded returning http request wrapper for nodejs and the browser",
+  "main": "main.js",
+  "dependencies": {
+    "vz.yielded": "",
+    "vz.rand": ""
+  },
+  "devDependencies": {
+    
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/manvalls/yhr.git"
+  },
+  "bugs": {
+    "url": "https://github.com/manvalls/yhr/issues"
+  },
+  "author": "Manuel Valls Fernández <manolo@chatiku.com>",
+  "license": "LGPL-3.0"
+}
