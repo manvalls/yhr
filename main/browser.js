@@ -23,13 +23,14 @@ module.exports = function(method,uri,headers,body,bin){
       yd = new Yielded(),
       i;
   
+  xhr[yielded] = yd;
+  xhr.onload = onLoad;
+  xhr.onerror = onError;
+  
   xhr.open(method,uri,true);
   
   if(bin) xhr.responseType = bin === true?'arraybuffer':bin;
   else xhr.responseType = 'text';
-  
-  xhr.onload = onLoad;
-  xhr.onerror = onError;
   
   for(i = 0;i < keys.length;i++) xhr.setRequestHeader(keys[i],headers[keys[i]]);
   
@@ -40,5 +41,7 @@ module.exports = function(method,uri,headers,body,bin){
   }
   
   xhr.send(body);
+  
+  return yd;
 };
 
