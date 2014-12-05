@@ -1,6 +1,6 @@
 {
   "name": "yhr",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "A yielded returning http request wrapper for nodejs and the browser",
   "main": "main.js",
   "dependencies": {
