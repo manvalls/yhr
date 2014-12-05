@@ -5,6 +5,11 @@ var Yielded = require('vz.yielded'),
 
 function onLoad(){
   
+  switch(Math.floor(this.status/100)){
+    case 5: return this[yielded].error = new Error('Server error ' + this.status);
+    case 4: return this[yielded].error = new Error('Client error ' + this.status);
+  }
+  
   if(!this.responseType || this.responseType != 'text') this[yielded].value = this.response;
   else if(this.getResponseHeader('Content-Type').indexOf('application/json') != -1){
     try{ this[yielded].value = JSON.parse(this.response); }
