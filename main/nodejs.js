@@ -2,7 +2,7 @@ var Yielded = require('vz.yielded'),
     Su = require('vz.rand').Su,
     
     yielded = Su(),
-    binary = Su(),
+    options = Su(),
     args = Su(),
     
     body = Su(),
@@ -17,7 +17,7 @@ var Yielded = require('vz.yielded'),
 function onEnd(){
   var m;
   
-  if(this[binary]) this[yielded].value = this[body];
+  if(this[options].binary) this[yielded].value = this[body];
   else{
     if(!this.headers['content-type']) this[yielded].value = this[body] + '';
     else{
@@ -82,8 +82,9 @@ function onError(e){
   this[yielded].error = e;
 }
 
-module.exports = function(method,uri,headers,body,bin){
-  var req;
+module.exports = function(method,uri,body,opt){
+  var req,
+      headers = (opt = opt || {}).headers;
   
   headers = headers || {};
   
@@ -106,7 +107,7 @@ module.exports = function(method,uri,headers,body,bin){
   
   req[args] = arguments;
   req[yielded] = this[yielded] || new Yielded();
-  req[binary] = bin;
+  req[options] = opt;
   
   req.on('response',onResponse);
   req.on('error',onError);

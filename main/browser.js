@@ -10,7 +10,7 @@ function onLoad(){
     case 4: return this[yielded].error = new Error('Client error ' + this.status);
   }
   
-  if(!this.responseType || this.responseType != 'text') this[yielded].value = this.response;
+  if(this.responseType != 'text') this[yielded].value = this.response;
   else if(this.getResponseHeader('Content-Type').indexOf('application/json') != -1){
     try{ this[yielded].value = JSON.parse(this.response); }
     catch(e){ this[yielded].error = e; }
@@ -22,9 +22,10 @@ function onError(e){
   this[yielded].error = e;
 }
 
-module.exports = function(method,uri,headers,body,bin){
+module.exports = function(method,uri,body,opt){
   var xhr = new XMLHttpRequest(),
-      keys = Object.keys(headers = headers || {}),
+      headers = (opt = opt || {}).headers || {},
+      keys = Object.keys(headers),
       yd = new Yielded(),
       i;
   
@@ -34,7 +35,7 @@ module.exports = function(method,uri,headers,body,bin){
   
   xhr.open(method,uri,true);
   
-  if(bin) xhr.responseType = bin === true?'arraybuffer':bin;
+  if(opt.binary) xhr.responseType = bin === true?'arraybuffer':bin;
   else xhr.responseType = 'text';
   
   for(i = 0;i < keys.length;i++) xhr.setRequestHeader(keys[i],headers[keys[i]]);

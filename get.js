@@ -1,6 +1,6 @@
 var yhr = require('./main.js');
 
-module.exports = function(uri,headers,bin){
-  return yhr('GET',uri,headers,null,bin);
+module.exports = function(uri,opt){
+  return yhr('GET',uri,null,opt);
 };
 
