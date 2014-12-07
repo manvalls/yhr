@@ -97,6 +97,7 @@ module.exports = function(method,uri,body,opt){
   headers['User-Agent'] = headers['User-Agent'] || 'nodejs/' + process.version;
   headers['Accept-Encoding'] = headers['Accept-Encoding'] || 'gzip, deflate';
   headers['Accept-Charset'] = headers['Accept-Charset'] || 'utf-8';
+  headers['Accept'] = headers['Accept'] || 'application/json';
   
   uri = url.parse(uri);
   uri.method = method;

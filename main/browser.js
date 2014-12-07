@@ -25,7 +25,7 @@ function onError(e){
 module.exports = function(method,uri,body,opt){
   var xhr = new XMLHttpRequest(),
       headers = (opt = opt || {}).headers || {},
-      keys = Object.keys(headers),
+      keys,
       yd = new Yielded(),
       i;
   
@@ -38,6 +38,10 @@ module.exports = function(method,uri,body,opt){
   if(opt.binary) xhr.responseType = bin === true?'arraybuffer':bin;
   else xhr.responseType = 'text';
   
+  headers['Accept-Charset'] = headers['Accept-Charset'] || 'utf-8';
+  headers['Accept'] = headers['Accept'] || 'application/json';
+  
+  keys = Object.keys(headers);
   for(i = 0;i < keys.length;i++) xhr.setRequestHeader(keys[i],headers[keys[i]]);
   
   if(body && !headers['Content-Type']){
