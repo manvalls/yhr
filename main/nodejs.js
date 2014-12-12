@@ -17,15 +17,20 @@ var Yielded = require('vz.yielded'),
 function onEnd(){
   var m;
   
-  if(this[options].binary) this[yielded].value = this[body];
+  if(!this.headers['content-type']) this[yielded].value = this[body]; // Unknown
   else{
-    if(!this.headers['content-type']) this[yielded].value = this[body] + '';
-    else{
-      m = this.headers['content-type'].match(ctRE);
-      if(m[1] == 'application/json') this[yielded].value = JSON.parse(this[body].toString(m[2] || 'utf8'));
-      else this[yielded].value = this[body].toString(m[2] || 'utf8');
+    m = this.headers['content-type'].match(ctRE);
+    
+    switch(m[1]){
+      case 'application/json':
+        this[yielded].value = JSON.parse(this[body].toString(m[2] || 'utf8'));
+        break;
+      default:
+        this[yielded].value = this[body]; // Unsupported
+        break;
     }
   }
+  
 }
 
 function onData(data){

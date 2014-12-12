@@ -1,20 +1,37 @@
 var Yielded = require('vz.yielded'),
     Su = require('vz.rand').Su,
+    utf8bts = require('utf8bts'),
     
+    ctRE = /([^;]+)(?:.*charset=(.*)(;.*)?)?/,
+    utf8 = /utf-?8/i,
     yielded = Su();
 
 function onLoad(){
+  var m,ct,txt;
   
   switch(Math.floor(this.status/100)){
     case 5: return this[yielded].error = new Error('Server error ' + this.status);
     case 4: return this[yielded].error = new Error('Client error ' + this.status);
   }
   
-  if(this.responseType != 'text') this[yielded].value = this.response;
-  else if(this.getResponseHeader('Content-Type').indexOf('application/json') != -1){
-    try{ this[yielded].value = JSON.parse(this.response); }
-    catch(e){ this[yielded].error = e; }
-  }else this[yielded].value = this.response;
+  ct = this.getResponseHeader('Content-Type');
+  if(!ct) return this[yielded].value = this.response; // Unknown
+  
+  m = ctRE.match(ct);
+  if(!m[1].match(utf8)) return this[yielded].value = this.response; // Unsupported
+  
+  switch(m[0]){
+    case 'application/json':
+      txt = new Uint8Buffer(this.response);
+      txt = utf8bts(txt);
+      
+      try{ this[yielded].value = JSON.parse(txt); }
+      catch(e){ this[yielded].error = e; }
+      break;
+    default:
+      this[yielded].value = this.response; // Unsupported
+      break;
+  }
   
 }
 
@@ -35,8 +52,7 @@ module.exports = function(method,uri,body,opt){
   
   xhr.open(method,uri,true);
   
-  if(opt.binary) xhr.responseType = bin === true?'arraybuffer':bin;
-  else xhr.responseType = 'text';
+  xhr.responseType = 'arraybuffer';
   
   headers['Accept-Charset'] = headers['Accept-Charset'] || 'utf-8';
   headers['Accept'] = headers['Accept'] || 'application/json';
