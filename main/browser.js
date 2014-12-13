@@ -1,13 +1,11 @@
 var Yielded = require('vz.yielded'),
     Su = require('vz.rand').Su,
-    utf8bts = require('utf8bts'),
     
     ctRE = /([^;]+)(?:.*charset=(.*)(;.*)?)?/,
-    utf8 = /utf-?8/i,
     yielded = Su();
 
 function onLoad(){
-  var m,ct,txt;
+  var m,ct,txt,e;
   
   switch(Math.floor(this.status/100)){
     case 5: return this[yielded].error = new Error('Server error ' + this.status);
@@ -15,21 +13,34 @@ function onLoad(){
   }
   
   ct = this.getResponseHeader('Content-Type');
-  if(!ct) return this[yielded].value = this.response; // Unknown
+  if(!ct){
+    e = new TypeError('Blank content type');
+    e.response = this.response;
+    this[yielded].error = e;
+    return;
+  }
   
   m = ctRE.match(ct);
-  if(!m[1].match(utf8)) return this[yielded].value = this.response; // Unsupported
   
   switch(m[0]){
     case 'application/json':
-      txt = new Uint8Buffer(this.response);
-      txt = utf8bts(txt);
+      txt = new Uint8Array(this.response);
       
-      try{ this[yielded].value = JSON.parse(txt); }
-      catch(e){ this[yielded].error = e; }
+      try{
+        txt = (new TextDecoder(m[1] || 'utf-8')).decode(txt);
+        this[yielded].value = JSON.parse(txt);
+      }catch(e){
+        e.response = this.response;
+        this[yielded].error = e;
+      }
+      
       break;
     default:
-      this[yielded].value = this.response; // Unsupported
+      
+      e = new TypeError('Unsupported content type');
+      e.response = this.response;
+      this[yielded].error = e;
+      
       break;
   }
   

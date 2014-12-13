@@ -15,18 +15,31 @@ var Yielded = require('vz.yielded'),
     url = require('url');
 
 function onEnd(){
-  var m;
+  var m,e;
   
-  if(!this.headers['content-type']) this[yielded].value = this[body]; // Unknown
-  else{
+  if(!this.headers['content-type']){
+    e = new TypeError('Blank content type');
+    e.response = this[body];
+    this[yielded].error = e;
+  }else{
     m = this.headers['content-type'].match(ctRE);
     
     switch(m[1]){
       case 'application/json':
-        this[yielded].value = JSON.parse(this[body].toString(m[2] || 'utf8'));
+        
+        try{ this[yielded].value = JSON.parse(this[body].toString(m[2] || 'utf8')); }
+        catch(e){
+          e.response = this[body];
+          this[yielded].error = e;
+        }
+        
         break;
       default:
-        this[yielded].value = this[body]; // Unsupported
+        
+        e = new TypeError('Unsupported content type');
+        e.response = this[body];
+        this[yielded].error = e;
+        
         break;
     }
   }

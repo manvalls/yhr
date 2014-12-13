@@ -5,8 +5,7 @@
   "main": "main.js",
   "dependencies": {
     "vz.yielded": "",
-    "vz.rand": "",
-    "utf8bts": ""
+    "vz.rand": ""
   },
   "devDependencies": {},
   "repository": {
