@@ -50,6 +50,10 @@ function onError(e){
   this[yielded].error = e;
 }
 
+function onTimeout(){
+  this[yielded].error = new Error('Request timed out');
+}
+
 module.exports = function(method,uri,body,opt){
   var xhr = new XMLHttpRequest(),
       headers = (opt = opt || {}).headers || {},
@@ -58,8 +62,11 @@ module.exports = function(method,uri,body,opt){
       i;
   
   xhr[yielded] = yd;
+  xhr.timeout = opt.timeout || 0;
+  
   xhr.onload = onLoad;
   xhr.onerror = onError;
+  xhr.ontimeout = onTimeout;
   
   xhr.open(method,uri,true);
   

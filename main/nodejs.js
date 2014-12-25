@@ -50,6 +50,15 @@ function onData(data){
   this[body] = Buffer.concat([this[body],data]);
 }
 
+function onTimeout(){
+  this.abort();
+  this[yielded].error = new Error('Request timed out');
+}
+
+function onError(e){
+  this[yielded].error = e;
+}
+
 function onResponse(res){
   var ds;
   
@@ -96,10 +105,6 @@ function onResponse(res){
   res.on('error',onError);
 }
 
-function onError(e){
-  this[yielded].error = e;
-}
-
 module.exports = function(method,uri,body,opt){
   var req,
       headers = (opt = opt || {}).headers;
@@ -128,8 +133,11 @@ module.exports = function(method,uri,body,opt){
   req[yielded] = this[yielded] || new Yielded();
   req[options] = opt;
   
+  if(opt.timeout) req.setTimeout(opt.timeout);
+  
   req.on('response',onResponse);
   req.on('error',onError);
+  req.on('timeout',onTimeout);
   
   req.end(body);
   
